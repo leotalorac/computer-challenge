@@ -87,7 +87,8 @@ public class EndavaPathFinder {
             for(int child = 0; child < nodes.size(); child++){
                 if(matrix[current][child] != 0){
                     int add = matrix[current][child];
-                    if(cost[child][mask | (int)Math.pow(2,child)] > cost[current][mask]+add){
+                    String p = paths[current][mask];
+                    if(cost[child][mask | (int)Math.pow(2,child)] > cost[current][mask]+add && !p.contains(String.valueOf(child))){
                         pq.add(new int[] {child,mask | (int)Math.pow(2,child)});
                         cost[child][mask | (int)Math.pow(2,child)] = cost[current][mask]+add;
                         paths[child][mask | (int)Math.pow(2,child)] = paths[current][mask] +","+ String.valueOf(child);
