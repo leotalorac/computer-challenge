@@ -20,7 +20,7 @@ public class EndavaPathFinder {
         ArrayList<Integer> nodes = new ArrayList<>();
         nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
-        int[][] matrix =ReadGraph("g2.txt",nodes,nodesnames);
+        int[][] matrix =ReadGraph("input.txt",nodes,nodesnames);
         ProcessPath(nodes,matrix);
     }
     static int[][] ReadGraph(String filename, ArrayList<Integer> nodes,HashMap<String,Integer> nodesnames ) throws FileNotFoundException {
@@ -111,5 +111,12 @@ public class EndavaPathFinder {
         });
         System.out.println();
         System.out.println("path " + pans);
+
+        System.out.println("---------------------------");
+        for(int v =0;v<n;v++){
+            String p=paths[v][nl-1];
+            System.out.println(p);
+        }
+
     }
 }
