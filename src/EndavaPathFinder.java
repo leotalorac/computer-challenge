@@ -1,6 +1,7 @@
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.stream.IntStream;
 
 
 public class EndavaPathFinder {
@@ -27,20 +28,23 @@ public class EndavaPathFinder {
             int i = 0;
             while(sc.hasNextLine()) {
                 line = sc.nextLine();
-                nodes.add(i);
-                i++;
-                nodesnames.put(line, nodes.size() - 1);
                 if (line.contains(",")) {
                     break;
                 }
+                nodes.add(i);
+                i++;
+                nodesnames.put(line, nodes.size() - 1);
             }
-            matrix = new int[nodes.size()-1][nodes.size()-1];
+            matrix = new int[nodes.size()][nodes.size()];
             String[] edge;
-            do{
+            edge = line.split(",");
+            matrix[nodesnames.get(edge[0])][nodesnames.get(edge[1])] = Integer.parseInt(edge[2]);
+            matrix[nodesnames.get(edge[1])][nodesnames.get(edge[0])] = Integer.parseInt(edge[2]);
+            do {
+                line = sc.nextLine();
                 edge = line.split(",");
                 matrix[nodesnames.get(edge[0])][nodesnames.get(edge[1])] = Integer.parseInt(edge[2]);
                 matrix[nodesnames.get(edge[1])][nodesnames.get(edge[0])] = Integer.parseInt(edge[2]);
-                line = sc.nextLine();
             }while (sc.hasNextLine());
         }
         return matrix;
@@ -55,9 +59,14 @@ public class EndavaPathFinder {
         }
     }
     static void ProcessPath(ArrayList<Integer> nodes, int[][] matrix){
-        int[][] cost = new int[nodes.size()][(int) Math.pow(2, nodes.size())];
+        int nl =(int) Math.pow(2, nodes.size());
+        int n = nodes.size();
+        int[][] cost = new int[nodes.size()][nl];
+        for (int i=0;i<nodes.size();i++){
+            cost[i] = IntStream.generate(() -> (int)Math.pow(2,30)).limit(nl).toArray();
+        }
         Queue<int []> pq = new LinkedList<>();
-        for(int node =0;node<nodes.size()-1;node++){
+        for(int node =0;node<nodes.size();node++){
             pq.add(new int[] {node,(int)Math.pow(2,node)});
             cost[node][(int) Math.pow(2,node)] = 0;
         }
@@ -65,7 +74,7 @@ public class EndavaPathFinder {
             int current = pq.peek()[0];
             int mask = pq.peek()[1];
             pq.remove();
-            for(int child = 0; child < nodes.size()-1; child++){
+            for(int child = 0; child < nodes.size(); child++){
                 if(matrix[current][child] != 0){
                     int add = matrix[current][child];
                     if(cost[child][mask | (int)Math.pow(2,child)] > cost[current][mask]+add){
@@ -77,7 +86,7 @@ public class EndavaPathFinder {
         }
         int answer = (int) Math.pow(2,20);
         for(int v =0;v<nodes.size();v++){
-            answer = Math.min(answer,cost[nodes.get(v)][(int)Math.pow(2,v)]);
+            answer = Math.min(answer,cost[v][(int)Math.pow(2,n)-1]);
         }
         PrintMatrix(cost);
         System.out.println("ans "+answer);
