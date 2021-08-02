@@ -1,15 +1,11 @@
 import java.io.FileReader;
 import java.io.FileNotFoundException;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.IntStream;
 
 
 public class EndavaPathFinder {
-    private static HashMap<String,Integer> nodesnames;
     private static HashMap<Integer,String> nodesnamesint;
-    private static boolean[] visited;
-    static ArrayList<ArrayList<Integer>> adj;
     // Read
     // Process path
     // Print
@@ -18,9 +14,9 @@ public class EndavaPathFinder {
     // user menu
     public static void main(String[] args) throws FileNotFoundException {
         ArrayList<Integer> nodes = new ArrayList<>();
-        nodesnames = new HashMap<>();
+        HashMap<String, Integer> nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
-        int[][] matrix =ReadGraph("input.txt",nodes,nodesnames);
+        int[][] matrix =ReadGraph("input.txt",nodes, nodesnames);
         ProcessPath(nodes,matrix);
     }
     static int[][] ReadGraph(String filename, ArrayList<Integer> nodes,HashMap<String,Integer> nodesnames ) throws FileNotFoundException {
@@ -56,9 +52,7 @@ public class EndavaPathFinder {
     static void PrintMatrix(int[][] matrix){
         for (int[] l : matrix){
             Arrays.stream(l)
-                    .forEach(e->{
-                        System.out.print(e+",");
-                    });
+                    .forEach(e-> System.out.print(e+","));
             System.out.println();
         }
     }
@@ -91,7 +85,7 @@ public class EndavaPathFinder {
                     if(cost[child][mask | (int)Math.pow(2,child)] > cost[current][mask]+add && !p.contains(String.valueOf(child))){
                         pq.add(new int[] {child,mask | (int)Math.pow(2,child)});
                         cost[child][mask | (int)Math.pow(2,child)] = cost[current][mask]+add;
-                        paths[child][mask | (int)Math.pow(2,child)] = paths[current][mask] +","+ String.valueOf(child);
+                        paths[child][mask | (int)Math.pow(2,child)] = paths[current][mask] +","+ child;
                     }
 
                 }
@@ -107,9 +101,7 @@ public class EndavaPathFinder {
         }
         PrintMatrix(cost);
         System.out.println("ans "+answer);
-        Arrays.stream(pans.split(",")).forEach(e->{
-            System.out.print(nodesnamesint.get(Integer.parseInt(e))+",");
-        });
+        Arrays.stream(pans.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
         System.out.println();
         System.out.println("path " + pans);
 
