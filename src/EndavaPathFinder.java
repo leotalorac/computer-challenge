@@ -6,9 +6,9 @@ import java.util.stream.LongStream;
 
 public class EndavaPathFinder {
     private static HashMap<Integer,String> nodesnamesint;
-    // Read
-    // Process path
-    // Print
+    // Read ✓
+    // Process path ✓
+    // Print ✓
     // Save
     // Compress
     // user menu
@@ -17,9 +17,9 @@ public class EndavaPathFinder {
         Map<String, Integer> nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
         long[][] matrix = readGraph("input.txt",nodes, nodesnames);
-        //processPath(nodes,matrix);
-        pathTwo(nodes,matrix,0,7);
-        pathTwo(nodes,matrix,7,0);
+        processPath(nodes,matrix);
+        pathTwo(nodes,matrix,nodesnames.get("n1"),nodesnames.get("n2"));
+        //pathTwo(nodes,matrix,8,0);
     }
     static long[][] readGraph(String filename, List<Integer> nodes, Map<String,Integer> nodesnames ) throws FileNotFoundException {
         FileReader fr = new FileReader(filename);
@@ -63,16 +63,14 @@ public class EndavaPathFinder {
         int n = nodes.size();
         long [][] cost = new long[n][nl];
         String[][] paths = new String[n][nl];
-        for (int i=0;i<nodes.size();i++){
-            cost[i] = LongStream.generate(() -> Long.MAX_VALUE).limit(nl).toArray();
-            paths[i] = new String[nl];
-            for(int j=0;j<nl;j++){
-                paths[i][j] = "";
-            }
-        }
         //Simpleentry
         Queue<int []> pq = new LinkedList<>();
         for(int node =0;node<nodes.size();node++){
+            cost[node] = LongStream.generate(() -> Long.MAX_VALUE).limit(nl).toArray();
+            paths[node] = new String[nl];
+            for(int j=0;j<nl;j++){
+                paths[node][j] = "";
+            }
             pq.add(new int[] {node,(int)Math.pow(2,node)});
             cost[node][(int) Math.pow(2,node)] = 0;
             paths[node][(int) Math.pow(2,node)] = String.valueOf(node);
@@ -105,6 +103,7 @@ public class EndavaPathFinder {
         if(! pans.equals("")){
             System.out.println("El camino es:");
             Arrays.stream(pans.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
+            System.out.println();
         }else{
             System.out.println("El grafo no tiene solución posible");
         }
@@ -116,8 +115,6 @@ public class EndavaPathFinder {
         int[][] paths = new int[n][n];
         for(int i=0;i<nodes.size();i++){
             distances[i] = LongStream.generate(()->Integer.MAX_VALUE).limit(nodes.size()).toArray();
-        }
-        for(int i=0;i<nodes.size();i++){
             for(int j=0;j<nodes.size();j++){
                 if(i == j){
                     distances[i][j]=0;
@@ -138,9 +135,13 @@ public class EndavaPathFinder {
                 }
             }
         }
-        System.out.println("Distancia de " + distances[u][v]);
-        Arrays.stream(getpath(u,v,paths).split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
-        System.out.println();
+        if(!getpath(u,v,paths).equals("")){
+            System.out.println("Distancia de " + distances[u][v]);
+            Arrays.stream(getpath(u,v,paths).split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
+            System.out.println();
+        }else{
+            System.out.println("No existe un camino");
+        }
     }
     static public String getpath(int u,int v,int[][] paths){
         if( paths[u][v] == 0){
