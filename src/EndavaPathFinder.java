@@ -13,13 +13,13 @@ public class EndavaPathFinder {
     // Compress
     // user menu
     public static void main(String[] args) throws FileNotFoundException {
-        ArrayList<Integer> nodes = new ArrayList<>();
-        HashMap<String, Integer> nodesnames = new HashMap<>();
+        List<Integer> nodes = new ArrayList<>();
+        Map<String, Integer> nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
-        int[][] matrix =ReadGraph("input.txt",nodes, nodesnames);
-        ProcessPath(nodes,matrix);
+        int[][] matrix = readGraph("input.txt",nodes, nodesnames);
+        processPath(nodes,matrix);
     }
-    static int[][] ReadGraph(String filename, ArrayList<Integer> nodes,HashMap<String,Integer> nodesnames ) throws FileNotFoundException {
+    static int[][] readGraph(String filename, List<Integer> nodes, Map<String,Integer> nodesnames ) throws FileNotFoundException {
         FileReader fr = new FileReader(filename);
         String line="";
         int[][] matrix;
@@ -49,25 +49,27 @@ public class EndavaPathFinder {
         }
         return matrix;
     }
-    static void PrintMatrix(int[][] matrix){
+    static void printMatrix(int[][] matrix){
         for (int[] l : matrix){
             Arrays.stream(l)
                     .forEach(e-> System.out.print(e+","));
             System.out.println();
         }
     }
-    static void ProcessPath(ArrayList<Integer> nodes, int[][] matrix){
+    static void processPath(List<Integer> nodes, int[][] matrix){
         int nl =(int) Math.pow(2, nodes.size());
         int n = nodes.size();
         int[][] cost = new int[n][nl];
         String[][] paths = new String[n][nl];
         for (int i=0;i<nodes.size();i++){
-            cost[i] = IntStream.generate(() -> (int)Math.pow(2,30)).limit(nl).toArray();
+            cost[i] = IntStream.generate(() -> Integer.MAX_VALUE).limit(nl).toArray();
             paths[i] = new String[nl];
             for(int j=0;j<nl;j++){
                 paths[i][j] = "";
             }
         }
+
+        //Simpleentry
         Queue<int []> pq = new LinkedList<>();
         for(int node =0;node<nodes.size();node++){
             pq.add(new int[] {node,(int)Math.pow(2,node)});
@@ -81,33 +83,31 @@ public class EndavaPathFinder {
             for(int child = 0; child < nodes.size(); child++){
                 if(matrix[current][child] != 0){
                     int add = matrix[current][child];
-                    String p = paths[current][mask];
-                    if(cost[child][mask | (int)Math.pow(2,child)] > cost[current][mask]+add && !p.contains(String.valueOf(child))){
+                    String path = paths[current][mask];
+                    if(cost[child][mask | (int)Math.pow(2,child)] > cost[current][mask]+add && !path.contains(String.valueOf(child))){
                         pq.add(new int[] {child,mask | (int)Math.pow(2,child)});
                         cost[child][mask | (int)Math.pow(2,child)] = cost[current][mask]+add;
                         paths[child][mask | (int)Math.pow(2,child)] = paths[current][mask] +","+ child;
                     }
-
                 }
             }
         }
-        int answer = (int) Math.pow(2,20);
+        int answer = Integer.MAX_VALUE;
         String pans = "";
         for(int v =0;v<nodes.size();v++){
-            if(answer >=cost[v][(int)Math.pow(2,n)-1]){
-                answer = cost[v][(int)Math.pow(2,n)-1];
-                pans = paths[v][(int)Math.pow(2,n)-1];
+            if(answer >=cost[v][nl-1]){
+                answer = cost[v][nl-1];
+                pans = paths[v][nl-1];
             }
         }
-        PrintMatrix(cost);
+        printMatrix(cost);
         System.out.println("ans "+answer);
         Arrays.stream(pans.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
         System.out.println();
         System.out.println("path " + pans);
-
         System.out.println("---------------------------");
         for(int v =0;v<n;v++){
-            String p=paths[v][nl-1];
+            String p = paths[v][nl-1];
             System.out.println(p);
         }
 
