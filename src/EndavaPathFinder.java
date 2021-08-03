@@ -1,7 +1,6 @@
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.util.*;
-import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 
@@ -18,7 +17,9 @@ public class EndavaPathFinder {
         Map<String, Integer> nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
         long[][] matrix = readGraph("input.txt",nodes, nodesnames);
-        processPath(nodes,matrix);
+        //processPath(nodes,matrix);
+        pathTwo(nodes,matrix,0,7);
+        pathTwo(nodes,matrix,7,0);
     }
     static long[][] readGraph(String filename, List<Integer> nodes, Map<String,Integer> nodesnames ) throws FileNotFoundException {
         FileReader fr = new FileReader(filename);
@@ -69,7 +70,6 @@ public class EndavaPathFinder {
                 paths[i][j] = "";
             }
         }
-
         //Simpleentry
         Queue<int []> pq = new LinkedList<>();
         for(int node =0;node<nodes.size();node++){
@@ -108,7 +108,49 @@ public class EndavaPathFinder {
         }else{
             System.out.println("El grafo no tiene solución posible");
         }
-
-
+    }
+    static public void pathTwo(List<Integer> nodes, long[][] matrix,int u,int v){
+        //Use floyd marshall algorithm
+        int n = nodes.size();
+        long[][] distances = new long[nodes.size()][nodes.size()];
+        int[][] paths = new int[n][n];
+        for(int i=0;i<nodes.size();i++){
+            distances[i] = LongStream.generate(()->Integer.MAX_VALUE).limit(nodes.size()).toArray();
+        }
+        for(int i=0;i<nodes.size();i++){
+            for(int j=0;j<nodes.size();j++){
+                if(i == j){
+                    distances[i][j]=0;
+                    paths[i][j] =j;
+                } else if(matrix[i][j] !=0){
+                    distances[i][j] =matrix[i][j];
+                    paths[i][j] = j;
+                }
+            }
+        }
+        for(int k =0;k<nodes.size();k++){
+            for (int i = 0; i < nodes.size(); i++) {
+                for (int j = 0; j < nodes.size(); j++) {
+                    if(distances[i][j] > distances[i][k] + distances[k][j]){
+                        distances[i][j]= distances[i][k] + distances[k][j];
+                        paths[i][j] = paths[i][k];
+                    }
+                }
+            }
+        }
+        System.out.println("Distancia de " + distances[u][v]);
+        Arrays.stream(getpath(u,v,paths).split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
+        System.out.println();
+    }
+    static public String getpath(int u,int v,int[][] paths){
+        if( paths[u][v] == 0){
+            return "";
+        }
+        String path = u +",";
+        while (u!=v){
+            u=paths[u][v];
+            path += u + ",";
+        }
+        return path;
     }
 }
