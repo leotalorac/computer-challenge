@@ -2,6 +2,7 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 
 public class EndavaPathFinder {
@@ -16,13 +17,13 @@ public class EndavaPathFinder {
         List<Integer> nodes = new ArrayList<>();
         Map<String, Integer> nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
-        int[][] matrix = readGraph("input.txt",nodes, nodesnames);
+        long[][] matrix = readGraph("input.txt",nodes, nodesnames);
         processPath(nodes,matrix);
     }
-    static int[][] readGraph(String filename, List<Integer> nodes, Map<String,Integer> nodesnames ) throws FileNotFoundException {
+    static long[][] readGraph(String filename, List<Integer> nodes, Map<String,Integer> nodesnames ) throws FileNotFoundException {
         FileReader fr = new FileReader(filename);
         String line="";
-        int[][] matrix;
+        long[][] matrix;
         try(Scanner sc = new Scanner(fr)){
             int i = 0;
             while(sc.hasNextLine()) {
@@ -35,34 +36,34 @@ public class EndavaPathFinder {
                 nodesnames.put(line, nodes.size() - 1);
                 nodesnamesint.put(nodes.size()-1,line);
             }
-            matrix = new int[nodes.size()][nodes.size()];
+            matrix = new long[nodes.size()][nodes.size()];
             String[] edge;
             edge = line.split(",");
-            matrix[nodesnames.get(edge[0])][nodesnames.get(edge[1])] = Integer.parseInt(edge[2]);
-            matrix[nodesnames.get(edge[1])][nodesnames.get(edge[0])] = Integer.parseInt(edge[2]);
+            matrix[nodesnames.get(edge[0])][nodesnames.get(edge[1])] = Long.parseLong(edge[2]);
+            matrix[nodesnames.get(edge[1])][nodesnames.get(edge[0])] = Long.parseLong(edge[2]);
             do {
                 line = sc.nextLine();
                 edge = line.split(",");
-                matrix[nodesnames.get(edge[0])][nodesnames.get(edge[1])] = Integer.parseInt(edge[2]);
-                matrix[nodesnames.get(edge[1])][nodesnames.get(edge[0])] = Integer.parseInt(edge[2]);
+                matrix[nodesnames.get(edge[0])][nodesnames.get(edge[1])] = Long.parseLong(edge[2]);
+                matrix[nodesnames.get(edge[1])][nodesnames.get(edge[0])] = Long.parseLong(edge[2]);
             }while (sc.hasNextLine());
         }
         return matrix;
     }
-    static void printMatrix(int[][] matrix){
-        for (int[] l : matrix){
+    static void printMatrix(long[][] matrix){
+        for (long[] l : matrix){
             Arrays.stream(l)
                     .forEach(e-> System.out.print(e+","));
             System.out.println();
         }
     }
-    static void processPath(List<Integer> nodes, int[][] matrix){
+    static void processPath(List<Integer> nodes, long[][] matrix){
         int nl =(int) Math.pow(2, nodes.size());
         int n = nodes.size();
-        int[][] cost = new int[n][nl];
+        long [][] cost = new long[n][nl];
         String[][] paths = new String[n][nl];
         for (int i=0;i<nodes.size();i++){
-            cost[i] = IntStream.generate(() -> Integer.MAX_VALUE).limit(nl).toArray();
+            cost[i] = LongStream.generate(() -> Long.MAX_VALUE).limit(nl).toArray();
             paths[i] = new String[nl];
             for(int j=0;j<nl;j++){
                 paths[i][j] = "";
@@ -82,7 +83,7 @@ public class EndavaPathFinder {
             pq.remove();
             for(int child = 0; child < nodes.size(); child++){
                 if(matrix[current][child] != 0){
-                    int add = matrix[current][child];
+                    long add = matrix[current][child];
                     String path = paths[current][mask];
                     if(cost[child][mask | (int)Math.pow(2,child)] > cost[current][mask]+add && !path.contains(String.valueOf(child))){
                         pq.add(new int[] {child,mask | (int)Math.pow(2,child)});
@@ -92,7 +93,7 @@ public class EndavaPathFinder {
                 }
             }
         }
-        int answer = Integer.MAX_VALUE;
+        long answer = Long.MAX_VALUE;
         String pans = "";
         for(int v =0;v<nodes.size();v++){
             if(answer >=cost[v][nl-1]){
@@ -100,16 +101,14 @@ public class EndavaPathFinder {
                 pans = paths[v][nl-1];
             }
         }
-        printMatrix(cost);
-        System.out.println("ans "+answer);
-        Arrays.stream(pans.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
-        System.out.println();
-        System.out.println("path " + pans);
-        System.out.println("---------------------------");
-        for(int v =0;v<n;v++){
-            String p = paths[v][nl-1];
-            System.out.println(p);
+        System.out.println("Costo del camino "+answer);
+        if(! pans.equals("")){
+            System.out.println("El camino es:");
+            Arrays.stream(pans.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
+        }else{
+            System.out.println("El grafo no tiene solución posible");
         }
+
 
     }
 }
