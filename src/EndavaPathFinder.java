@@ -18,11 +18,12 @@ public class EndavaPathFinder {
         Map<String, Integer> nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
         //long[][] matrix = readGraph("input.txt",nodes, nodesnames);
-        printBanner();
-        long[][] matrix = userFile(nodes,nodesnames);
-        userInteraction(matrix, nodes, nodesnames);
-        processPath(nodes,matrix);
-        pathTwo(nodes,matrix,nodesnames.get("n1"),nodesnames.get("n2"));
+        try(Scanner sc = new Scanner(System.in)){
+            printBanner();
+            long[][] matrix = userFile(nodes,nodesnames,sc);
+            userInteraction(matrix, nodes, nodesnames,sc);
+        }
+
         //pathTwo(nodes,matrix,8,0);
     }
     static void printBanner() throws FileNotFoundException{
@@ -33,45 +34,69 @@ public class EndavaPathFinder {
             }
         }
     }
-    static void userInteraction(long[][] matrix,List<Integer> nodes, Map<String,Integer> nodesnames){
-        Scanner syssc = new Scanner(System.in);
-        System.out.println("Which action do you want to perform?");
-        System.out.println("1. Get best path passing over all rooms");
-        System.out.println("2. Get best path between two rooms");
-        System.out.println("3. finish");
+    static void userInteraction(long[][] matrix,List<Integer> nodes, Map<String,Integer> nodesnames,Scanner syssc){
+        boolean keep =true;
+        while(keep) {
+            System.out.println("Which action do you want to perform?");
+            System.out.println("1. Get best path passing over all rooms");
+            System.out.println("2. Get best path between two rooms");
+            System.out.println("3. finish");
+            try{
+                int option = Integer.parseInt(syssc.next());
+                switch (option) {
+                    case 1:
+                        processPath(nodes, matrix);
+                        break;
+                    case 2:
+                        System.out.println("Put the names of the nodes from the list of nodes: ");
+                        printAllNodes(nodesnames);
+                        String n1 = syssc.next();
+                        String n2 = syssc.next();
+                        pathTwo(nodes, matrix, nodesnames.get(n1), nodesnames.get(n2));
+                        break;
+                    case 3:
+                        keep=false;
+                        break;
+                    default:
+                        System.out.println("Option not allowed");
+                }
+            }catch (Exception e){
+                System.out.println("The option must be a number and be in the allowed ones");
+            }
+        }
+
 
     }
+    static void printAllNodes(Map<String,Integer> nodesnames){
+        nodesnames.keySet().forEach(e ->System.out.print(e + ", "));
+        System.out.println();
+    }
 
-    static long[][] userFile(List<Integer> nodes, Map<String,Integer> nodesnames) throws FileNotFoundException {
-        Scanner syssc = new Scanner(System.in);
-        System.out.println("Welcome to path finder at Endava offices ");
-        File tmpDir = new File("graph.eg");
-        long[][] tem = new long[1][1];
-        boolean exists = tmpDir.exists();
-        String filename= "graph.txt";
-        if(exists){
-            System.out.println("Already a file exist, do you want use it? y/n");
-            if(! syssc.next().equals("y")){
-                System.out.println("Write the file name to continue");
-                filename= syssc.next();
-            }else{
-                try {
-                    decompress();
-                } catch (IOException e) {
-                    e.printStackTrace();
+    static long[][] userFile(List<Integer> nodes, Map<String,Integer> nodesnames,Scanner syssc) throws FileNotFoundException {
+            System.out.println("Welcome to path finder at Endava offices ");
+            File tmpDir = new File("graph.eg");
+            boolean exists = tmpDir.exists();
+            String filename = "graph.txt";
+            if (exists) {
+                System.out.println("Already a file exist, do you want use it? y/n");
+                if (!syssc.next().equals("y")) {
+                    System.out.println("Write the file name to continue");
+                    filename = syssc.next();
+                } else {
+                    try {
+                        decompress();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+            } else {
+                System.out.println("Write the file name to continue");
+                filename = syssc.next();
             }
-        }else{
-            System.out.println("Write the file name to continue");
-            filename= syssc.next();
-        }
-        long[][] matrix = readGraph(filename,nodes, nodesnames);
-        syssc.close();
-        return matrix;
+            return readGraph(filename, nodes, nodesnames);
     }
 
     //read from path
-
 
     static long[][] readGraph(String filename, List<Integer> nodes, Map<String,Integer> nodesnames ) throws FileNotFoundException {
         FileReader fr = new FileReader(filename);
@@ -106,6 +131,8 @@ public class EndavaPathFinder {
                 matrix[nodesnames.get(edge[1])][nodesnames.get(edge[0])] = Long.parseLong(edge[2]);
             }while (sc.hasNextLine());
         }
+        File fd = new File(filename);
+        fd.delete();
         return matrix;
     }
     static void printMatrix(long[][] matrix){
@@ -242,11 +269,11 @@ public class EndavaPathFinder {
         if( paths[u][v] == 0){
             return "";
         }
-        String path = u +",";
+        StringBuilder path = new StringBuilder(u + ",");
         while (u!=v){
             u=paths[u][v];
-            path += u + ",";
+            path.append(u).append(",");
         }
-        return path;
+        return path.toString();
     }
 }
