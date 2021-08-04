@@ -1,7 +1,8 @@
-import java.io.FileReader;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.LongStream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 
 public class EndavaPathFinder {
@@ -12,11 +13,14 @@ public class EndavaPathFinder {
     // Save
     // Compress
     // user menu
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         List<Integer> nodes = new ArrayList<>();
         Map<String, Integer> nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
         long[][] matrix = readGraph("input.txt",nodes, nodesnames);
+
+        compress("input.txt");
+        decompress("out.txt");
         processPath(nodes,matrix);
         pathTwo(nodes,matrix,nodesnames.get("n1"),nodesnames.get("n2"));
         //pathTwo(nodes,matrix,8,0);
@@ -107,6 +111,42 @@ public class EndavaPathFinder {
         }else{
             System.out.println("El grafo no tiene solución posible");
         }
+    }
+    static public void compress(String filepath) throws IOException {
+        //Instantiating the FileInputStream
+        FileInputStream inputStream = new FileInputStream(filepath);
+        //Instantiating the FileOutputStream
+        String outputPath = "out.txt";
+        FileOutputStream outputStream = new FileOutputStream(outputPath);
+        //Instantiating the DeflaterOutputStream
+        DeflaterOutputStream compresser = new DeflaterOutputStream(outputStream);
+        int contents;
+        while ((contents=inputStream.read())!=-1){
+            compresser.write(contents);
+        }
+        compresser.close();
+        System.out.println("File compressed.......");
+    }
+    static public void decompress(String filepath) throws IOException {
+        //assign Input File : file2 to FileInputStream for reading data
+        FileInputStream fis=new FileInputStream(filepath);
+
+        //assign output file: file3 to FileOutputStream for reading the data
+        FileOutputStream fos=new FileOutputStream("file3");
+
+        //assign inflaterInputStream to FileInputStream for uncompressing the data
+        InflaterInputStream iis=new InflaterInputStream(fis);
+
+        //read data from inflaterInputStream and write it into FileOutputStream
+        int data;
+        while((data=iis.read())!=-1)
+        {
+            fos.write(data);
+        }
+
+        //close the files
+        fos.close();
+        iis.close();
     }
     static public void pathTwo(List<Integer> nodes, long[][] matrix,int u,int v){
         //Use floyd marshall algorithm
