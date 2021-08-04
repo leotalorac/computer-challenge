@@ -132,7 +132,7 @@ public class EndavaPathFinder {
             }while (sc.hasNextLine());
         }
         File fd = new File(filename);
-        fd.delete();
+        //fd.delete();
         return matrix;
     }
     static void printMatrix(long[][] matrix){
