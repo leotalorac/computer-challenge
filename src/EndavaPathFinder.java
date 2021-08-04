@@ -125,6 +125,7 @@ public class EndavaPathFinder {
             compresser.write(contents);
         }
         compresser.close();
+        inputStream.close();
         System.out.println("File compressed.......");
     }
     static public void decompress(String filepath) throws IOException {
@@ -147,6 +148,7 @@ public class EndavaPathFinder {
         //close the files
         fos.close();
         iis.close();
+        System.out.println("File readed...");
     }
     static public void pathTwo(List<Integer> nodes, long[][] matrix,int u,int v){
         //Use floyd marshall algorithm
