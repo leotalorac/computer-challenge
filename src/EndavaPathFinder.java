@@ -11,22 +11,75 @@ public class EndavaPathFinder {
     // Process path ✓
     // Print ✓
     // Save
-    // Compress
+    // Compress ✓
     // user menu
     public static void main(String[] args) throws IOException {
         List<Integer> nodes = new ArrayList<>();
         Map<String, Integer> nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
-        long[][] matrix = readGraph("input.txt",nodes, nodesnames);
-
-        compress("input.txt");
-        decompress("out.txt");
+        //long[][] matrix = readGraph("input.txt",nodes, nodesnames);
+        printBanner();
+        long[][] matrix = userFile(nodes,nodesnames);
+        userInteraction(matrix, nodes, nodesnames);
         processPath(nodes,matrix);
         pathTwo(nodes,matrix,nodesnames.get("n1"),nodesnames.get("n2"));
         //pathTwo(nodes,matrix,8,0);
     }
+    static void printBanner() throws FileNotFoundException{
+        FileReader fr = new FileReader("banner.txt");
+        try(Scanner sc = new Scanner(fr)){
+            while(sc.hasNextLine()){
+                System.out.println(sc.nextLine());
+            }
+        }
+    }
+    static void userInteraction(long[][] matrix,List<Integer> nodes, Map<String,Integer> nodesnames){
+        Scanner syssc = new Scanner(System.in);
+        System.out.println("Which action do you want to perform?");
+        System.out.println("1. Get best path passing over all rooms");
+        System.out.println("2. Get best path between two rooms");
+        System.out.println("3. finish");
+
+    }
+
+    static long[][] userFile(List<Integer> nodes, Map<String,Integer> nodesnames) throws FileNotFoundException {
+        Scanner syssc = new Scanner(System.in);
+        System.out.println("Welcome to path finder at Endava offices ");
+        File tmpDir = new File("graph.eg");
+        long[][] tem = new long[1][1];
+        boolean exists = tmpDir.exists();
+        String filename= "graph.txt";
+        if(exists){
+            System.out.println("Already a file exist, do you want use it? y/n");
+            if(! syssc.next().equals("y")){
+                System.out.println("Write the file name to continue");
+                filename= syssc.next();
+            }else{
+                try {
+                    decompress();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }else{
+            System.out.println("Write the file name to continue");
+            filename= syssc.next();
+        }
+        long[][] matrix = readGraph(filename,nodes, nodesnames);
+        syssc.close();
+        return matrix;
+    }
+
+    //read from path
+
+
     static long[][] readGraph(String filename, List<Integer> nodes, Map<String,Integer> nodesnames ) throws FileNotFoundException {
         FileReader fr = new FileReader(filename);
+        try {
+            compress(filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String line="";
         long[][] matrix;
         try(Scanner sc = new Scanner(fr)){
@@ -116,7 +169,7 @@ public class EndavaPathFinder {
         //Instantiating the FileInputStream
         FileInputStream inputStream = new FileInputStream(filepath);
         //Instantiating the FileOutputStream
-        String outputPath = "out.txt";
+        String outputPath = "graph.eg";
         FileOutputStream outputStream = new FileOutputStream(outputPath);
         //Instantiating the DeflaterOutputStream
         DeflaterOutputStream compresser = new DeflaterOutputStream(outputStream);
@@ -128,12 +181,12 @@ public class EndavaPathFinder {
         inputStream.close();
         System.out.println("File compressed.......");
     }
-    static public void decompress(String filepath) throws IOException {
+    static public void decompress() throws IOException {
         //assign Input File : file2 to FileInputStream for reading data
-        FileInputStream fis=new FileInputStream(filepath);
+        FileInputStream fis=new FileInputStream("graph.eg");
 
         //assign output file: file3 to FileOutputStream for reading the data
-        FileOutputStream fos=new FileOutputStream("file3");
+        FileOutputStream fos=new FileOutputStream("graph.txt");
 
         //assign inflaterInputStream to FileInputStream for uncompressing the data
         InflaterInputStream iis=new InflaterInputStream(fis);
