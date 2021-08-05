@@ -21,6 +21,8 @@ public class EndavaPathFinder {
             printBanner();
             long[][] matrix = userFile(nodes,nodesnames,sc);
             userInteraction(matrix, nodes, nodesnames,sc);
+        }catch (Exception e){
+            System.out.println("Unexpected error");
         }
     }
     //print endava logo in console
