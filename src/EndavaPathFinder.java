@@ -23,6 +23,7 @@ public class EndavaPathFinder {
             userInteraction(matrix, nodes, nodesnames,sc);
         }
     }
+    //print endava logo in console
     static void printBanner() throws FileNotFoundException{
         FileReader fr = new FileReader("banner.txt");
         try(Scanner sc = new Scanner(fr)){
@@ -31,6 +32,7 @@ public class EndavaPathFinder {
             }
         }
     }
+    //get options from user
     static void userInteraction(long[][] matrix,List<Integer> nodes, Map<String,Integer> nodesnames,Scanner syssc){
         boolean keep =true;
         while(keep) {
@@ -61,14 +63,13 @@ public class EndavaPathFinder {
                 System.out.println("The option must be a number and be in the allowed ones");
             }
         }
-
-
     }
+    //print the list of nodes from map with names
     static void printAllNodes(Map<String,Integer> nodesnames){
         nodesnames.keySet().forEach(e ->System.out.print(e + ", "));
         System.out.println();
     }
-
+    //charge file
     static long[][] userFile(List<Integer> nodes, Map<String,Integer> nodesnames,Scanner syssc) throws FileNotFoundException {
             System.out.println("Welcome to path finder at Endava offices ");
             File tmpDir = new File("graph.eg");
@@ -92,9 +93,7 @@ public class EndavaPathFinder {
             }
             return readGraph(filename, nodes, nodesnames);
     }
-
-    //read from path
-
+    //read from path and compress the new information
     static long[][] readGraph(String filename, List<Integer> nodes, Map<String,Integer> nodesnames ) throws FileNotFoundException {
         FileReader fr = new FileReader(filename);
         try {
@@ -129,9 +128,10 @@ public class EndavaPathFinder {
             }while (sc.hasNextLine());
         }
         File fd = new File(filename);
-        //fd.delete();
+        fd.delete();
         return matrix;
     }
+    //print adjacent matrix
     static void printMatrix(long[][] matrix){
         for (long[] l : matrix){
             Arrays.stream(l)
@@ -139,6 +139,7 @@ public class EndavaPathFinder {
             System.out.println();
         }
     }
+    //process the all nodes path
     static void processPath(List<Integer> nodes, long[][] matrix){
         int nl =(int) Math.pow(2, nodes.size());
         int n = nodes.size();
@@ -173,22 +174,23 @@ public class EndavaPathFinder {
             }
         }
         long answer = Long.MAX_VALUE;
-        String pans = "";
+        String minpath = "";
         for(int v =0;v<nodes.size();v++){
             if(answer >=cost[v][nl-1]){
                 answer = cost[v][nl-1];
-                pans = paths[v][nl-1];
+                minpath = paths[v][nl-1];
             }
         }
-        System.out.println("Cost of the path: "+answer);
-        if(! pans.equals("")){
+        if(! minpath.equals("")){
+            System.out.println("Cost of the path: "+answer);
             System.out.println("The path is:");
-            Arrays.stream(pans.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+"->"));
+            Arrays.stream(minpath.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+"->"));
             System.out.println();
         }else{
             System.out.println("The graph has no possible solution");
         }
     }
+    //compress file
     static public void compress(String filepath) throws IOException {
         FileInputStream inputStream = new FileInputStream(filepath);
         String outputPath = "graph.eg";
@@ -202,6 +204,7 @@ public class EndavaPathFinder {
         inputStream.close();
         System.out.println("File compressed.......");
     }
+    //decompress file
     static public void decompress() throws IOException {
         FileInputStream fis=new FileInputStream("graph.eg");
         FileOutputStream fos=new FileOutputStream("graph.txt");
@@ -217,6 +220,7 @@ public class EndavaPathFinder {
         iis.close();
         System.out.println("File read.......");
     }
+    //get the path one to other node
     static public void pathTwo(List<Integer> nodes, long[][] matrix,int u,int v){
         //Use floyd marshall algorithm
         int n = nodes.size();
@@ -252,6 +256,7 @@ public class EndavaPathFinder {
             System.out.println("The path is not possible");
         }
     }
+    //print the path from floyd marshall matriz
     static public String getpath(int u,int v,int[][] paths){
         if( paths[u][v] == 0){
             return "";
