@@ -10,21 +10,18 @@ public class EndavaPathFinder {
     // Read ✓
     // Process path ✓
     // Print ✓
-    // Save
+    // Save ✓
     // Compress ✓
-    // user menu
+    // user menu ✓
     public static void main(String[] args) throws IOException {
         List<Integer> nodes = new ArrayList<>();
         Map<String, Integer> nodesnames = new HashMap<>();
         nodesnamesint = new HashMap<>();
-        //long[][] matrix = readGraph("input.txt",nodes, nodesnames);
         try(Scanner sc = new Scanner(System.in)){
             printBanner();
             long[][] matrix = userFile(nodes,nodesnames,sc);
             userInteraction(matrix, nodes, nodesnames,sc);
         }
-
-        //pathTwo(nodes,matrix,8,0);
     }
     static void printBanner() throws FileNotFoundException{
         FileReader fr = new FileReader("banner.txt");
@@ -183,22 +180,19 @@ public class EndavaPathFinder {
                 pans = paths[v][nl-1];
             }
         }
-        System.out.println("Costo del camino "+answer);
+        System.out.println("Cost of the path: "+answer);
         if(! pans.equals("")){
-            System.out.println("El camino es:");
+            System.out.println("The path is:");
             Arrays.stream(pans.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
             System.out.println();
         }else{
-            System.out.println("El grafo no tiene solución posible");
+            System.out.println("The graph has no possible solution");
         }
     }
     static public void compress(String filepath) throws IOException {
-        //Instantiating the FileInputStream
         FileInputStream inputStream = new FileInputStream(filepath);
-        //Instantiating the FileOutputStream
         String outputPath = "graph.eg";
         FileOutputStream outputStream = new FileOutputStream(outputPath);
-        //Instantiating the DeflaterOutputStream
         DeflaterOutputStream compresser = new DeflaterOutputStream(outputStream);
         int contents;
         while ((contents=inputStream.read())!=-1){
@@ -209,16 +203,9 @@ public class EndavaPathFinder {
         System.out.println("File compressed.......");
     }
     static public void decompress() throws IOException {
-        //assign Input File : file2 to FileInputStream for reading data
         FileInputStream fis=new FileInputStream("graph.eg");
-
-        //assign output file: file3 to FileOutputStream for reading the data
         FileOutputStream fos=new FileOutputStream("graph.txt");
-
-        //assign inflaterInputStream to FileInputStream for uncompressing the data
         InflaterInputStream iis=new InflaterInputStream(fis);
-
-        //read data from inflaterInputStream and write it into FileOutputStream
         int data;
         while((data=iis.read())!=-1)
         {
@@ -228,7 +215,7 @@ public class EndavaPathFinder {
         //close the files
         fos.close();
         iis.close();
-        System.out.println("File readed...");
+        System.out.println("File read.......");
     }
     static public void pathTwo(List<Integer> nodes, long[][] matrix,int u,int v){
         //Use floyd marshall algorithm
@@ -258,11 +245,11 @@ public class EndavaPathFinder {
             }
         }
         if(!getpath(u,v,paths).equals("")){
-            System.out.println("Distancia de " + distances[u][v]);
+            System.out.println("Cost of the path " + distances[u][v]);
             Arrays.stream(getpath(u,v,paths).split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
             System.out.println();
         }else{
-            System.out.println("No existe un camino");
+            System.out.println("The path is not possible");
         }
     }
     static public String getpath(int u,int v,int[][] paths){
