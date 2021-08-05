@@ -183,7 +183,7 @@ public class EndavaPathFinder {
         System.out.println("Cost of the path: "+answer);
         if(! pans.equals("")){
             System.out.println("The path is:");
-            Arrays.stream(pans.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
+            Arrays.stream(pans.split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+"->"));
             System.out.println();
         }else{
             System.out.println("The graph has no possible solution");
@@ -246,7 +246,7 @@ public class EndavaPathFinder {
         }
         if(!getpath(u,v,paths).equals("")){
             System.out.println("Cost of the path " + distances[u][v]);
-            Arrays.stream(getpath(u,v,paths).split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+","));
+            Arrays.stream(getpath(u,v,paths).split(",")).forEach(e-> System.out.print(nodesnamesint.get(Integer.parseInt(e))+"->"));
             System.out.println();
         }else{
             System.out.println("The path is not possible");
